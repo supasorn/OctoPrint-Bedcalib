@@ -13,18 +13,27 @@ import octoprint.plugin
 
 class BedcalibPlugin(octoprint.plugin.SettingsPlugin,
                      octoprint.plugin.AssetPlugin,
-                     octoprint.plugin.TemplatePlugin):
+                     octoprint.plugin.TemplatePlugin,
+                     octoprint.plugin.StartupPlugin):
 
+  def on_after_startup(self):
+    self._logger.info("Hello!")
+
+  def get_template_vars(self):
+    return dict(test=self._settings.get(["left"]))
+    # return dict(test=100)
 	##~~ SettingsPlugin mixin
+  def get_template_configs(self):
+    return [
+        dict(type="tab", custom_bindings=False),
+        dict(type="settings", custom_bindings=False)
+    ]
 
-	def get_settings_defaults(self):
-		return dict(
-			# put your plugin's default settings here
-		)
+  def get_settings_defaults(self):
+		return dict(minx=0, maxx=180, miny=0, maxy=180)
 
 	##~~ AssetPlugin mixin
-
-	def get_assets(self):
+  def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
 		# core UI here.
 		return dict(
@@ -35,7 +44,7 @@ class BedcalibPlugin(octoprint.plugin.SettingsPlugin,
 
 	##~~ Softwareupdate hook
 
-	def get_update_information(self):
+  def get_update_information(self):
 		# Define the configuration for your plugin to use with the Software Update
 		# Plugin here. See https://github.com/foosel/OctoPrint/wiki/Plugin:-Software-Update
 		# for details.
